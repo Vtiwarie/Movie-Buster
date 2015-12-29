@@ -7,15 +7,46 @@ import org.json.JSONObject;
  */
 public class Movie {
 
-    private int id;
+    private long id;
+    private long movie_id;
     private String title;
+    private String overView;
+    private double popularity;
+    private String relaseDate;
     private String posterPath;
 
-    public int getId() {
+    /**
+     * Converts a JSON object to a movie object
+     *
+     * @param jsonObject
+     * @return
+     */
+    public static Movie fromJSON(JSONObject jsonObject) {
+
+        try {
+            Movie movie = new Movie();
+            movie.setMovieId(jsonObject.getLong("id"));
+            movie.setTitle(jsonObject.getString("title"));
+            movie.setOverView(jsonObject.getString("overview"));
+            movie.setPopularity(jsonObject.getDouble("popularity"));
+            movie.setRelaseDate(jsonObject.getString("release_date"));
+            movie.setPosterPath(jsonObject.getString("poster_path"));
+            return movie;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /****************************************
+     * GETTERS AND SETTERS
+     ****************************************/
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -35,18 +66,35 @@ public class Movie {
         this.title = title;
     }
 
-    public static Movie fromJSON(JSONObject jsonObject) {
+    public long getMovieId() {
+        return movie_id;
+    }
 
-        try {
-            Movie movie = new Movie();
-            movie.setId(jsonObject.getInt("id"));
-            movie.setTitle(jsonObject.getString("title"));
-            movie.setPosterPath(jsonObject.getString("poster_path"));
-            return movie;
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+    public void setMovieId(long movie_id) {
+        this.movie_id = movie_id;
+    }
 
-        return null;
+    public String getOverView() {
+        return overView;
+    }
+
+    public void setOverView(String overView) {
+        this.overView = overView;
+    }
+
+    public double getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
+    }
+
+    public String getRelaseDate() {
+        return relaseDate;
+    }
+
+    public void setRelaseDate(String relaseDate) {
+        this.relaseDate = relaseDate;
     }
 }

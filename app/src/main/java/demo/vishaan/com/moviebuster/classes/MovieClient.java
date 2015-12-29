@@ -36,7 +36,12 @@ public class MovieClient {
         mAPIBaseURL = mContext.getResources().getString(API_BASE_URL_ID);
     }
 
-    public Uri getNowPlaingUri() {
+    /**
+     * Get the URL for movies that are now playing
+     *
+     * @return
+     */
+    public Uri getNowPlayingUri() {
         Uri uri = Uri.parse(mAPIBaseURL).buildUpon()
                 .appendEncodedPath(URLS.MOVIES_NOW_PLAYING)
                 .appendQueryParameter(PARAMS.API_KEY, mAPIKey)
@@ -44,11 +49,16 @@ public class MovieClient {
         return uri;
     }
 
+    /**
+     * Connect to the REST API
+     *
+     * @param uri to connect to
+     * @return String containing the data retrieved from the REST API
+     */
     public String connect(Uri uri) {
         try{
 
             URL url = new URL(uri.toString());
-Helper.l(url.toString());
             HttpURLConnection client = (HttpURLConnection)url.openConnection();
             client.setRequestMethod(HTTP_REQUEST_METHOD);
             client.connect();
@@ -61,7 +71,6 @@ Helper.l(url.toString());
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-Helper.l(sb.toString());
 
             return sb.toString();
 

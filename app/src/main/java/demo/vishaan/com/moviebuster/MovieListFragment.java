@@ -24,21 +24,15 @@ import demo.vishaan.com.moviebuster.services.FetchMovieService;
  * create an instance of this fragment.
  */
 public class MovieListFragment extends Fragment {
-    private String mParam1;
-    private String mParam2;
-
     private static final String ARG_MOVIE_ID = "crime_id";
-
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param movieID The ID of the movie in the database
      * @return A new instance of fragment MovieList.
      */
-    // TODO: Rename and change types and number of parameters
     public static MovieListFragment newInstance(long movieID) {
         MovieListFragment fragment = new MovieListFragment();
         Bundle args = new Bundle();
@@ -50,9 +44,6 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
         MovieListReceiver mr = new MovieListReceiver();
         IntentFilter iff = new IntentFilter(MovieListReceiver.ACTION_UPDATE);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mr, iff);
@@ -68,11 +59,12 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        //START A SERVICE HERE
         updateMovieList();
     }
 
+    /**
+     * Start a service to retrieve the movie data and save to the database
+     */
     private void updateMovieList() {
         getActivity().startService(new Intent(getContext(), FetchMovieService.class));
     }
