@@ -29,15 +29,15 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     protected void setUp() throws Exception {
         deleteDatabases();
         mClient = new MovieClient(getContext());
+        mMovieHelper = new MovieDbHelper(mContext);
+        mMovieDb = mMovieHelper.getWritableDatabase();
+        assertEquals(true, mMovieDb.isOpen());
     }
 
     /**
      * Test the Movies database to ensure it has been set up properly.
      */
     public void testDB() {
-        mMovieHelper = new MovieDbHelper(mContext);
-        mMovieDb = mMovieHelper.getWritableDatabase();
-        assertEquals(true, mMovieDb.isOpen());
         ContentValues cv = new ContentValues();
         cv.put(MovieContracts.MovieContract.Columns.MOVIE_ID, 4);
         cv.put(MovieContracts.MovieContract.Columns.MOVIE_TITLE, "movie title");
@@ -45,9 +45,9 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         cv.put(MovieContracts.MovieContract.Columns.MOVIE_POSTER_PATH, "movie poster path");
         cv.put(MovieContracts.MovieContract.Columns.MOVIE_RELEASE_DATE, "movie release date");
         cv.put(MovieContracts.MovieContract.Columns.MOVIE_POPULARITY, 1.0f);
-        long _id = mMovieDb.insert(MovieContracts.MovieContract.TABLE_NAME, null, cv);
-Helper.l("Movie created with ID " + _id);
-        assertTrue(_id != -1);
+        long movieID = mMovieDb.insertOrThrow(MovieContracts.MovieContract.TABLE_NAME, null, cv);
+        Helper.l("Movie created with ID " + movieID);
+        assertTrue(movieID != -1);
 
         Cursor selectCursor = mMovieDb.query(
                 MovieContracts.MovieContract.TABLE_NAME,
@@ -59,9 +59,36 @@ Helper.l("Movie created with ID " + _id);
                 null
         );
 
-        assertTrue("Data has been found.", selectCursor.moveToFirst());
+        addNowPlaying(movieID);
+
+        assertTrue("Data has been found in " + MovieContracts.MovieContract.TABLE_NAME, selectCursor.moveToFirst());
         selectCursor.close();
-        mMovieDb.close();
+        mMovieHelper.close();
+
+    }
+
+    /**
+     * Test that the 'Now Playing' table has been set up properly
+     */
+    private void addNowPlaying(long movieID) {
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContracts.NowPlayingContract.Columns.REF_MOVIE, movieID);
+        long _id = mMovieDb.insertOrThrow(MovieContracts.NowPlayingContract.TABLE_NAME, null, cv);
+        Helper.l("Movie Now Playing with ID " + _id);
+        assertTrue(_id != -1);
+
+        Cursor selectCursor = mMovieDb.query(
+                MovieContracts.NowPlayingContract.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertTrue("Data has been found in " + MovieContracts.NowPlayingContract.TABLE_NAME, selectCursor.moveToFirst());
+        selectCursor.close();
     }
 
     /**

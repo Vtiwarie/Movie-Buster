@@ -74,7 +74,6 @@ public class MovieListFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-Helper.l(MovieListReceiver.class.getCanonicalName() + " received!!");
         }
     }
 
